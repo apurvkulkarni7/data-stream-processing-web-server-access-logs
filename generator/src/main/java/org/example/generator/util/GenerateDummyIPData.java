@@ -53,7 +53,7 @@ public class GenerateDummyIPData {
                     response = dbReader.city(InetAddress.getByName(ipAddress));
                     if (!String.valueOf(response.getCity().getName()).equals("null")) {
                         if (response.getCountry().getName().equals("United States")) {
-                            float curr_ratio = ((float) us_country_counter/(float) numIPAddress) *(float) 100;
+                            float curr_ratio = (us_country_counter /(float) numIPAddress) *(float) 100;
                             if (curr_ratio < 10){
                                 us_country_counter++;
                                 loopTheLoop = false;

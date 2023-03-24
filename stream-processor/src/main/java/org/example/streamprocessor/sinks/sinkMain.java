@@ -11,8 +11,8 @@ import org.apache.flink.streaming.api.functions.sink.filesystem.rollingpolicies.
 import java.io.File;
 import java.time.Duration;
 
-import static org.apache.flink.core.fs.FileSystem.WriteMode.OVERWRITE;
 import static org.example.streamprocessor.jobs.StreamProcessing.LOGGER;
+import static org.example.streamprocessor.utils.Tools.deleteDirectory;
 
 public class sinkMain {
     public static void mySinkTo(DataStream inputStream, CommandLine opt, String identifier) {
@@ -22,22 +22,12 @@ public class sinkMain {
             String kafkaBootstrapServer = opt.getOptionValue("sink-bootstrap-server", "localhost:9092");
             LOGGER.info("Writing output to Kafka-topic:{}, Kafka-Bootstrap-Server:{}", kafkaTopic, kafkaBootstrapServer);
             inputStream.sinkTo(new MyKafkaSink(kafkaBootstrapServer, kafkaTopic).build()).name("sink"); // Kafka
-        }
-        else if (opt.getOptionValue("sink-type").equals("stdout")) {
+        } else if (opt.getOptionValue("sink-type").equals("stdout")) {
             inputStream
                     .print()
                     .name(identifier);
-        }
-//        else if (opt.getOptionValue("sink-type").equals("els")) {
-//            inputStream.addSink(new EsSink(
-//                            opt.getOptionValue("sinkElsHostName"),
-//                            opt.getOptionValue("sinkElsPort"),
-//                            "country_data", 0
-//                    ).build())
-//                    .name("sink");
-//        }
-        else if (opt.getOptionValue("sink-type").equals("filesystem")) {
-            Path outFile = new Path("./out/" + identifier );
+        } else if (opt.getOptionValue("sink-type").equals("filesystem")) {
+            Path outFile = new Path("./out/" + identifier);
             deleteDirectory(new File(outFile.toString()));
             LOGGER.info("Writing output to: {}", outFile.getPath());
             StreamingFileSink<String> sink = StreamingFileSink.forRowFormat(
@@ -47,7 +37,7 @@ public class sinkMain {
                     .withRollingPolicy(
                             DefaultRollingPolicy
                                     .builder()
-                                    .withRolloverInterval(Duration.ofSeconds(Long.parseLong(opt.getOptionValue("runtime","300"))))
+                                    .withRolloverInterval(Duration.ofSeconds(Long.parseLong(opt.getOptionValue("runtime", "300"))))
                                     .withMaxPartSize(MemorySize.parse("2", MemorySize.MemoryUnit.GIGA_BYTES))
                                     .build()
                     )
@@ -57,14 +47,5 @@ public class sinkMain {
         }
     }
 
-    static boolean deleteDirectory(File directoryToBeDeleted) {
-        File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
-    }
 
 }

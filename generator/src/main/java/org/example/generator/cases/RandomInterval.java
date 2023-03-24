@@ -12,11 +12,10 @@ public class RandomInterval {
     private final long runtime_;
     private final String label_;
     private long messageCount_;
-    //private long frequency_;
-    private Logger LOGGER = Simulator.LOGGER;
-    private long minPause_ = 0;
-    private long maxPause_;
-    private long bias_ = 100; // to generate most numbers ranging from 0 to 10;
+    private final Logger LOGGER = Simulator.LOGGER;
+    private final long minPause_ = 0;
+    private final long maxPause_;
+    private final long bias_ = 100; // to generate most numbers ranging from 0 to 10;
 
     public RandomInterval(DataGenerator dataGenerator, MyKafkaProducer producer, long runtime, long maxPause, String label){
         this.runtime_ = runtime*1000; // Converting seconds to milliseconds
@@ -24,7 +23,6 @@ public class RandomInterval {
         this.generator_ = dataGenerator;
         this.label_ = label;
         this.messageCount_ = 0;
-        //this.frequency_ = frequency_;
         this.maxPause_ = maxPause;
     }
 
@@ -58,15 +56,13 @@ public class RandomInterval {
             LOGGER.info("Runtime:{} msec ({} min)",this.getRuntime(),this.getRuntime()/(1000*60));
             LOGGER.info("Sending data to Kafka topic: {} Bootstrap-server: {}",this.getProducer().kafkaTopic,this.getProducer().bootstrapServer);
 
-            long frequencyCounter = 0;
-            long loopCurrentStartTime = System.currentTimeMillis();
-
             while (System.currentTimeMillis() < end){
                 // Constructing a log line
                 String myLogLine = getGenerator().generate();
+
                 // Sending to topic
                 getProducer().send(myLogLine);
-                //LOGGER.debug(myLogLine);
+
                 this.increaseMessageCount();
                 Thread.sleep(generateBiasedRandomNumber());
             }

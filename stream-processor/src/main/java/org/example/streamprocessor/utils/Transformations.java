@@ -1,14 +1,13 @@
 package org.example.streamprocessor.utils;
 
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.functions.RichMapFunction;
-import org.apache.flink.api.java.tuple.*;
+import org.apache.flink.api.java.tuple.Tuple14;
+import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.functions.windowing.AllWindowFunction;
+import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.util.Collector;
-import org.example.streamprocessor.data.LogEvent;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,29 +23,21 @@ import java.util.regex.Pattern;
 
 public class Transformations {
 
-
-    public static String getMyKey(String key, LogEvent myEvent) {
-        myEvent.setKey(key);
-        return key;
-    }
-
     // For parsing the log file line
     public static class InputEventToTuple extends RichMapFunction<String, Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>> {
         private JSONObject database;
-        public final String regex = new StringBuilder()
-                //.append("([a-zA-Z.]+) ")
-                .append("([0-9\\.]+) ")
-                .append("(\\S+) ")
-                .append("(\\S+) ")
-                .append("\\[([\\w:/\\+\\-\\s\\d{4}]+)\\] ")
-                .append("\"([A-Z]+) ")
-                .append("(.*) ")
-                .append("([A-Z]+\\/[\\d.]+)\" ")
-                .append("([0-9]+) ")
-                .append("([0-9]+) ")
-                .append("\"([^\"]*)\" ")
-                .append("\"(.+?)\"")
-                .toString();
+        public final String regex = //.append("([a-zA-Z.]+) ")
+                "([0-9\\.]+) " +
+                        "(\\S+) " +
+                        "(\\S+) " +
+                        "\\[([\\w:/\\+\\-\\s\\d{4}]+)\\] " +
+                        "\"([A-Z]+) " +
+                        "(.*) " +
+                        "([A-Z]+\\/[\\d.]+)\" " +
+                        "([0-9]+) " +
+                        "([0-9]+) " +
+                        "\"([^\"]*)\" " +
+                        "\"(.+?)\"";
 
         @Override
         public void open(Configuration parameters) throws Exception {
@@ -112,49 +103,10 @@ public class Transformations {
         }
     }
 
-    // Functions using LogEvent data structure
-    // For parsing the log file line
-    public static class InputLogParser extends RichMapFunction<String, LogEvent> {
-        private File geoDb;
-        private JSONObject database;
-
+    // Functions to calculate visitors per second for given window period
+    public static class WindowVisitorsPerSecond implements AllWindowFunction<Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>, Tuple2<Long, Double>, TimeWindow> {
         @Override
-        public void open(Configuration parameters) throws Exception {
-            InputStreamReader mySourceFile;
-            try {
-                // Parse json database
-                String jsonStr = Files.readString(Paths.get("database.json"));
-                JSONObject myObj = (JSONObject) ((JSONObject) new JSONParser().parse(jsonStr)).get("ip_address");
-                this.database = myObj;
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-            super.open(parameters);
-        }
-
-        @Override
-        public LogEvent map(String input) throws Exception {
-            if (input.equals("SHUTDOWN")) {
-                Tools.StopStreamJob();
-            }
-
-            LogEvent myEvent = new LogEvent(input);
-            myEvent.logParser(this.database);
-            myEvent.setCount(1L);
-            return myEvent;
-        }
-    }
-
-    public static class LogEventToTuple2 implements MapFunction<LogEvent, Tuple2<String, Long>> {
-        @Override
-        public Tuple2<String, Long> map(LogEvent logEvent) throws Exception {
-            return new Tuple2<>(logEvent.getKey(), logEvent.getCount());
-        }
-    }
-
-    public static class AvgVisitorsPerSecond implements AllWindowFunction<Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>, Tuple2<Long,Double>, TimeWindow> {
-        @Override
-        public void apply(TimeWindow timeWindow, Iterable<Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>> iterable, Collector<Tuple2<Long,Double>> collector) throws Exception {
+        public void apply(TimeWindow timeWindow, Iterable<Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>> iterable, Collector<Tuple2<Long, Double>> collector) {
             long count = 0L;
             Tuple14 last_event = null;
             for (Tuple14 event : iterable) {
@@ -163,7 +115,21 @@ public class Transformations {
             }
             double windowLength = (timeWindow.getEnd() - timeWindow.getStart()) / 1000; // in seconds
             Double result = Double.valueOf(count) / windowLength;
-            collector.collect(new Tuple2<>((Long)last_event.f0, result));
+            collector.collect(new Tuple2<>((Long) last_event.f0, result));
+        }
+    }
+
+    // should be used when streams are keyed by ip addresses
+    public static class findSpuriousUser implements WindowFunction<Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>, String, String, TimeWindow> {
+        @Override
+        public void apply(String key, TimeWindow timeWindow, Iterable<Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>> iterable, Collector<String> collector) throws Exception {
+            Long sum = 0L;
+            for (Tuple14 eventi : iterable) {
+                sum += 1;
+            }
+            if (sum >= 3) {
+                collector.collect("Spurious visitor detected with IP Address: " + key);
+            }
         }
     }
 }

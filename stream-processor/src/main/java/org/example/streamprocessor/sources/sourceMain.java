@@ -35,7 +35,7 @@ public class sourceMain {
                     inputFormat,
                     path,
                     FileProcessingMode.PROCESS_CONTINUOUSLY,
-                    1l,
+                    1L,
                     BasicTypeInfo.STRING_TYPE_INFO
             );
         } else {

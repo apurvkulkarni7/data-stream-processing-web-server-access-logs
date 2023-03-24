@@ -20,7 +20,7 @@ public class Simulator
      */
     public static final Logger LOGGER = LoggerFactory.getLogger(Simulator.class);
 
-    public static void main( String[] args ) throws InterruptedException {
+    public static void main( String[] args ) {
 
         // Get cli argument and parse them
         CommandLine opt = new OptionsGenerator(args).build();
@@ -33,19 +33,13 @@ public class Simulator
         String generatorType = opt.getOptionValue("generator-type","constant");
 
         // Initialize data generator
-        // LogDatabaseGenerator.generate(databaseFile);
         DataGenerator myGenerator = new DataGenerator(databaseFile);
 
         // Initialize producer
-        //MyKafkaProducer myProducer = new MyKafkaProducer(kafkaTopic,bootstrapServer,3);
         MyKafkaProducer myProducer = new MyKafkaProducer(kafkaTopic,bootstrapServer);
 
         // Running the simulator
-        // new ConstantInterval(myGenerator,myProducer,runTime,loadHz, "Log generator").run();
-
         // Multithreaded approach
-
-
         int numOfThreads = 1; // number of threads to create
         ExecutorService executor = Executors.newFixedThreadPool(numOfThreads);
         for (int i = 0; i < numOfThreads; i++) {

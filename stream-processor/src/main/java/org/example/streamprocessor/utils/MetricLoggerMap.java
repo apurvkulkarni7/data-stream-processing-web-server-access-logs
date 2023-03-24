@@ -42,19 +42,7 @@ public class MetricLoggerMap<T> implements MapFunction<T, T> {
         this.identifier = identifier;
         this.loggingType = 2;
     }
-//    public MetricLoggerMap(BenchmarkConfig conf, String identifier) {
-//        this.identifier = identifier;
-//        this.loggingInterval = conf.loggingInterval;
-//        this.loggingType = 2;
-//
-//    }
-//
-//    public MetricLoggerMap(BenchmarkConfig conf, String identifier, int loggingType) {
-//        this.identifier = identifier;
-//        this.loggingInterval = conf.loggingInterval;
-//        this.loggingType = loggingType;
-//    }
-
+    
     @Override
     public T map(T element) throws Exception {
         totalReceived++;
@@ -90,7 +78,7 @@ public class MetricLoggerMap<T> implements MapFunction<T, T> {
                         String dateTimeString = matcher.group(1);
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z");
                         LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
-                        unixTimestamp = dateTime.toInstant(ZoneOffset.ofHours(1)).getEpochSecond()*1000; //in ms
+                        unixTimestamp = dateTime.toInstant(ZoneOffset.ofHours(1)).getEpochSecond() * 1000; //in ms
                     } else {
                         System.out.println("No match found.");
                     }
@@ -99,13 +87,13 @@ public class MetricLoggerMap<T> implements MapFunction<T, T> {
                 }
             }
 
-            if (printHeader){
+            if (printHeader) {
                 MetricLogger.info("identifier,thread_info,throughput_events_per_sec_pr_core,lateny_ms,elements processed");
                 printHeader = false;
             }
             // Final log string
             String logString = identifier + "," + Thread.currentThread().getName() + "," +
-                     throughput + " ," + latency + "," + totalReceived;
+                    throughput + " ," + latency + "," + totalReceived;
             MetricLogger.info(logString);
         }
         return element;

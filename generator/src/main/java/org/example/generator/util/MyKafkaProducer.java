@@ -11,20 +11,11 @@ public class MyKafkaProducer {
     public String kafkaTopic;
     public String bootstrapServer;
     public Producer producer;
-    public int partitions_num = 3;
-
-    //public MyKafkaProducer(String kafkaTopic, String bootstrapServer, int partitions_num) {
-    //    this.kafkaTopic = kafkaTopic;
-    //    this.bootstrapServer = bootstrapServer;
-    //    this.producer = build();
-    //    //this.partitions_num = partitions_num;
-    //}
 
     public MyKafkaProducer(String kafkaTopic, String bootstrapServer) {
         this.kafkaTopic = kafkaTopic;
         this.bootstrapServer = bootstrapServer;
         this.producer = build();
-        //this.partitions_num = 3;
     }
 
     public Producer<String, String> build() {
@@ -41,7 +32,6 @@ public class MyKafkaProducer {
     }
 
     public void send(String input){
-        //producer.send(new ProducerRecord<>(this.kafkaTopic, partition_i, "ad", input));
         producer.send(new ProducerRecord<>(this.kafkaTopic, input));
     }
 

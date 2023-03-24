@@ -43,19 +43,9 @@ public class DataGenerator {
         Reader mySourceFile;
         JSONObject myJsonData;
         try {
-//            if (this.databaseFile == "default") {
-//                // Default behavior
-//                ClassLoader classLoader = this.getClass().getClassLoader();
-//                InputStream stream = classLoader.getResourceAsStream("database.json");
-//                mySourceFile = new InputStreamReader(stream);
-//            } else {
-//                // If the input file is given
-//                mySourceFile = new FileReader(this.databaseFile);
-//            }
-
             this.databaseFile = "database.json";
-//            mySourceFile = new FileReader(this.databaseFile);
             String jsonStr = Files.readString(Paths.get(this.databaseFile));
+
             // Parse json database
             myJsonData = (JSONObject) new JSONParser().parse(jsonStr);
 
@@ -101,7 +91,6 @@ public class DataGenerator {
     private static String generateTimestamp() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss Z");
         Timestamp timestamp = new Timestamp(new Date().getTime());
-        //String myTimestamp = dateFormat.format(timestamp);
         return dateFormat.format(timestamp);
     }
     private String generateMethod() {

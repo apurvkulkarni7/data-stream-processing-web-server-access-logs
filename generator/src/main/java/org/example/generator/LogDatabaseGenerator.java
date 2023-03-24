@@ -73,8 +73,7 @@ public class LogDatabaseGenerator {
 
         JSONObject jsonDatabase = new JSONObject();
 
-        GenerateDummyIPData IpDataGenerator = new GenerateDummyIPData();
-        jsonDatabase.put("ip_address", IpDataGenerator.generate(100)); // IP Address
+        jsonDatabase.put("ip_address", GenerateDummyIPData.generate(100)); // IP Address
                                                                     // Timestamp
         jsonDatabase.put("request_method",getRequestMethod());      // Request method
         jsonDatabase.put("path",getPaths());                        // Url
