@@ -1,0 +1,68 @@
+//package org.sinks;
+//
+//import org.apache.flink.api.common.functions.RuntimeContext;
+//import org.apache.flink.streaming.connectors.elasticsearch.ElasticsearchSinkFunction;
+//import org.apache.flink.streaming.connectors.elasticsearch.RequestIndexer;
+//import org.apache.flink.streaming.connectors.elasticsearch7.ElasticsearchSink;
+//import org.apache.http.HttpHost;
+//import org.scadsai.benchmarks.web_server_access_benchmark.flink_benchmark.data.LogEvent;
+//import org.elasticsearch.action.index.IndexRequest;
+//import org.elasticsearch.client.Requests;
+//
+//import java.util.Arrays;
+//import java.util.HashMap;
+//import java.util.Map;
+//
+//// Defining elasticsearch sink builder
+//class EsSinkFunc implements ElasticsearchSinkFunction<LogEvent> {
+//
+//    private final String dataIndex;
+//    private final int dataLevel;
+//
+//    EsSinkFunc(String dataIndex, int dataLevel) {
+//        this.dataIndex = dataIndex;
+//        this.dataLevel = dataLevel;
+//    }
+//
+//    public IndexRequest asJson(LogEvent inputElement) {
+//        Map<String, Object> my_json = new HashMap<>();
+//
+//        if (dataLevel == 0) {
+//            my_json.put("data_key", inputElement.getKey());
+//            my_json.put("data_count", inputElement.getCount());
+//        } else if (dataLevel == 1) {
+//            my_json.put("ip", inputElement.getClientIpAddress());
+//            my_json.put("clientIdentity", inputElement.getClientIdentity());
+//            my_json.put("@timestamp", inputElement.getTimestamp());
+//            my_json.put("requestType", inputElement.getRequestType());
+//            my_json.put("requestedResource", inputElement.getRequestedResource());
+//            my_json.put("httpProtocol", inputElement.getHttpProtocol());
+//            my_json.put("httpResponse", inputElement.getHttpResponse());
+//            my_json.put("dataTransferred", inputElement.getDataTransferred());
+//            my_json.put("httpReferrer", inputElement.getHttpReferrer());
+//            my_json.put("userAgent", inputElement.getUserAgent());
+//            my_json.put("clientCountry", inputElement.getClientCountry());
+//            my_json.put("clientLatitude", inputElement.getClientLatitude());
+//            my_json.put("clientLongitude", inputElement.getClientLongitude());
+//            my_json.put("key", inputElement.getKey());
+//            my_json.put("count", inputElement.getCount());
+//        }
+//        return Requests.indexRequest().index(dataIndex).source(my_json);
+//    }
+//
+//    @Override
+//    public void process(LogEvent inputElement, RuntimeContext rCtx, RequestIndexer requestIndexer) {
+////        System.out.println(inputElement);
+//        requestIndexer.add(asJson(inputElement));
+//    }
+//}
+//
+//public class EsSink extends ElasticsearchSink.Builder {
+//    public EsSink(String elsHostname, String elsPort, String dataIndex, int dataLevel) {
+//        super(
+//                Arrays.asList(new HttpHost(elsHostname, Integer.parseInt(elsPort), "http")),
+//                new EsSinkFunc(dataIndex, dataLevel)
+//        );
+//        super.setBulkFlushMaxActions(1);
+//    }
+//}
