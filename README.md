@@ -21,10 +21,10 @@ ecko) Chrome/93.0.4577.63 Safari/537.36"
 
 ## Prerequisites
 This setup requires following libraries/frameworks:
-- Java 11.0.2-openJDK
-- Apache Maven
-- Apache Kafka
-- Apache Flink
+- Java (openjdk 11.0.2)
+- Apache Maven (3.9.1)
+- Apache Kafka (3.4.0)
+- Apache Flink (1.16.1)
 
 These frameworks can be either downloaded and set up manually or using the provided script. Once these frameworks are set up, the provided source code should be compiled.
 
@@ -45,15 +45,9 @@ To download and setup these frameworks using script:
 1. Change the `FRAMEWORK_DIR` option in environment file ([env.sh](./env.sh)). The default option is set to `<current-directory>/frameworks`. Do not change this variable if the default option is to be used.
 2. Run the main script ([run.sh](./run.sh)) with root privileges: 
    ```
-   # To download and setup the framework
-   sudo ./run.sh SETUP_FRAMEWORKS
-   
    # To (download and setup frameworks) + (compile source code)
    sudo ./run.sh SETUP
-   
-   # To reset the frameworks (works only for default FRAMEWORK_DIR value)
-   sudo ./run.sh RESET_FRAMEWORKS
-   
+      
    # For more info
    sudo ./run.sh HELP
    ```
@@ -68,6 +62,7 @@ FLINK_SLOTS_PER_TASKMANAGER
 SOURCE_BOOTSTRAP_SERVER
 SOURCE_TOPIC
 SINK_TYPE
+FILESYSTEM_OUTPUT_DIR (only if SINK_TYPE="filesystem")
 WINDOW_LENGTH
 SIMULATION_DURATION_SEC
 GENERATOR_TYPE
@@ -86,13 +81,6 @@ For more information
 ```bash
 sudo ./run.sh HELP
 ```
-
-## Roadmap
-- [x] Add create an initial full pipeline
-- [ ] Add option where generator will be shifted inside Apache Flink itself, instead of sending via ApacheKafka broker
-- [ ] Adjust the pipeline to be used with [SLURM](https://slurm.schedmd.com/documentation.html) on a multi-node cluster.
-- [ ] Containerize
-- [ ] Add visualization frameworks like Elasticsearch, Graphana
 
 ## License
 To be distributed and used under [GNU GENERAL PUBLIC LICENSE V3](./LICENSE)

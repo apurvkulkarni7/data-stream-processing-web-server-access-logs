@@ -161,13 +161,13 @@ run () {
   elif [[ "${OPERATION}" == "CLEAN" ]]; then
 
       $MVN clean
-      rm -rf log/*
-      rm -rf out/*
 
   elif [[ "${OPERATION}" == "DEEP_CLEAN" ]]; then
 
     $MVN clean
     rm -rf "${FRAMEWORK_DIR}"/*
+    rm -rf "$BASE_DIR"/log*
+    rm -rf "$FILESYSTEM_OUTPUT_DIR"
 
   elif [[ "${OPERATION}" == "SETUP" ]]; then
 
@@ -240,6 +240,8 @@ run () {
     kill_process "Simulator" "Stopping generator"
 
   elif [[ "$OPERATION" == "START_SIMULATION" ]]; then
+    mkdir -p "$FILESYSTEM_OUTPUT_DIR"
+    mkdir -p "$BASE_DIR/logs"
 
     logger_info "Initializing frameworks"
     bash setup-config.sh

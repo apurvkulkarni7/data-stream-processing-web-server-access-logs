@@ -13,8 +13,9 @@ export FLINK_HOME="${FRAMEWORK_DIR}/apache_flink"
 export FLINK_SLOTS_PER_TASKMANAGER="1"
 export FLINK_PARALLELISM="$FLINK_SLOTS_PER_TASKMANAGER" # For multi-node cluster the above value will be different
 # Sink type: 1- kafka, 2-filesystem, 3- stdout
-# filesystem - the output will be generated in file inside directory "./out"
+# filesystem - the output will be generated in file inside directory "FILESYSTEM_OUTPUT_DIR"
 export SINK_TYPE="filesystem"
+export FILESYSTEM_OUTPUT_DIR="$BASE_DIR/out"
 # Processing window length in seconds (how often the averaging should be produced)
 export WINDOW_LENGTH_SEC=5
 
