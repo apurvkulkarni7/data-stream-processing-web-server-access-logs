@@ -22,9 +22,9 @@ ecko) Chrome/93.0.4577.63 Safari/537.36"
 ## Prerequisites
 This setup requires following libraries/frameworks:
 - Java (openjdk 11.0.2)
-- Apache Maven (3.9.1)
-- Apache Kafka (3.4.0)
-- Apache Flink (1.16.1)
+- Apache Maven (3.9.4)
+- Apache Kafka (3.4.1)
+- Apache Flink (1.16.3)
 
 These frameworks can be either downloaded and set up manually or using the provided script. Once these frameworks are set up, the provided source code should be compiled.
 
@@ -46,10 +46,10 @@ To download and setup these frameworks using script:
 2. Run the main script ([run.sh](./run.sh)) with root privileges: 
    ```
    # To (download and setup frameworks) + (compile source code)
-   sudo ./run.sh SETUP
+   ./run.sh SETUP
       
    # For more info
-   sudo ./run.sh HELP
+   ./run.sh HELP
    ```
 
 ## Usage
@@ -70,16 +70,16 @@ LOAD_HZ
 ```
 Once these values are set, the simulation can be started using,
 ```bash
-sudo ./run START_SIMULATION
+./run.sh START_SIMULATION
 ```
 To stop the simulation at anytime before the SIMULATION_DURATION_SEC, press `CTRL+C` keys. Then run following,
 ```bash
-sudo ./run STOP_SIMULATION
+./run.sh STOP_SIMULATION
 ```
 
 For more information
 ```bash
-sudo ./run.sh HELP
+./run.sh HELP
 ```
 
 ## License

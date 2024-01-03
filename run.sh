@@ -48,20 +48,20 @@ download_frameworks () {
 
     if [[ "$SETUP_OPT" == "1" ]] || [[ "$SETUP_OPT" == "5" ]]; then
       if [[ ! -f "$FRAMEWORK_DIR/tmp/flink.tgz" ]]; then
-          logger_info "Getting Apache Flink-1.16.1 file archive"
-          wget -O "$FRAMEWORK_DIR/tmp/flink.tgz" "https://dlcdn.apache.org/flink/flink-1.16.1/flink-1.16.1-bin-scala_2.12.tgz"
+          logger_info "Getting Apache Flink-1.16.3 file archive"
+          wget -O "$FRAMEWORK_DIR/tmp/flink.tgz" "https://dlcdn.apache.org/flink/flink-1.16.3/flink-1.16.3-bin-scala_2.12.tgz"
       fi
     fi
     if [[ "$SETUP_OPT" == "2" ]] || [[ "$SETUP_OPT" == "5" ]]; then
       if [[ ! -f "$FRAMEWORK_DIR/tmp/kafka.tgz" ]]; then
-        logger_info "Getting Apache Kafka-3.4.0 file archive"
-        wget -O "$FRAMEWORK_DIR/tmp/kafka.tgz" "https://dlcdn.apache.org/kafka/3.4.0/kafka_2.13-3.4.0.tgz"
+        logger_info "Getting Apache Kafka-3.4.1 file archive"
+        wget -O "$FRAMEWORK_DIR/tmp/kafka.tgz" "https://dlcdn.apache.org/kafka/3.4.1/kafka_2.13-3.4.1.tgz"
       fi
     fi
     if [[ "$SETUP_OPT" == "3" ]] || [[ "$SETUP_OPT" == "5" ]]; then
       if [[ ! -f "$FRAMEWORK_DIR/tmp/mvn.tar.gz" ]]; then
-        logger_info "Getting Apache Maven-3.9.1 file archive"
-        wget -O "$FRAMEWORK_DIR/tmp/mvn.tar.gz" "https://dlcdn.apache.org/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.tar.gz"
+        logger_info "Getting Apache Maven-3.9.4 file archive"
+        wget -O "$FRAMEWORK_DIR/tmp/mvn.tar.gz" "https://dlcdn.apache.org/maven/maven-3/3.9.4/binaries/apache-maven-3.9.4-bin.tar.gz"
       fi
     fi
     if [[ "$SETUP_OPT" == "4" ]] || [[ "$SETUP_OPT" == "5" ]]; then
@@ -274,13 +274,6 @@ trap_ctrlc () {
 }
 
 trap trap_ctrlc SIGINT
-
-# Abort if not super user
-if [[ ! `whoami` = "root" ]]; then
-    echo "You must have administrative privileges to run this script"
-    echo "Try 'sudo $0 <OPTIONS>'"
-    exit 1
-fi
 
 if [[ "$1" == "HELP" ]] ; then
   cat << HELPTXT
