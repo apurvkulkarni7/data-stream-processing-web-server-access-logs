@@ -52,7 +52,9 @@ export SIMULATION_DURATION_SEC=1200
 # Generator type (constant/random)
 # constant - to generate events at constant rate at LOAD_HZ frequency
 # random - to generate events at random rate
-export GENERATOR_TYPE="random"
+export GENERATOR_TYPE="constant"
 # Log events to be generated per second (used if 'GENERATOR_TYPE="constant"' )
-export LOAD_HZ=10
-
+export LOAD_HZ=1
+export GENERATOR_RANDOM_NUMBER_AMOUNT=10
+export GENERATOR_RANDOM_NUMBER_MAX=1000
+export GENERATOR_RANDOM_NUMBER_MIN=1

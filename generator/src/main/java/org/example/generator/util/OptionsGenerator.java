@@ -25,14 +25,6 @@ public class OptionsGenerator {
                 .desc("Prints this message")
                 .build();
 
-        Option file = Option.builder()
-                .option("f")
-                .longOpt("file")
-                .hasArg(true)
-                .argName("path-to-database-file")
-                .desc("Database file. (Required)")
-                .build();
-
         Option kafkaTopic = Option.builder()
                 .option("kt")
                 .longOpt("kafka-topic")
@@ -40,6 +32,7 @@ public class OptionsGenerator {
                 .argName("kafka-topic-name")
                 .desc("Kafka topic where messages will be published. (Required)")
                 .build();
+        options.addOption(kafkaTopic);
 
         Option bootstrapServer = Option.builder()
                 .option("bs")
@@ -48,15 +41,7 @@ public class OptionsGenerator {
                 .argName("host:port")
                 .desc("Kafka server address where messages will be published. (Required)")
                 .build();
-
-        Option databaseFile = Option.builder()
-                .option("db")
-                .longOpt("database-file")
-                .hasArg(true)
-                .optionalArg(true)
-                .argName("path-to-file")
-                .desc("Path to file to which log database will be saved.")
-                .build();
+        options.addOption(bootstrapServer);
 
         Option runTime = Option.builder()
                 .option("rt")
@@ -65,6 +50,8 @@ public class OptionsGenerator {
                 .argName("<milliseconds>")
                 .desc("Runtime of the program. Optional argument (default value - 10000).")
                 .build();
+        options.addOption(runTime);
+
         Option generatorType = Option.builder()
                 .option("gt")
                 .longOpt("generator-type")
@@ -83,14 +70,39 @@ public class OptionsGenerator {
                         "Optional argument (default value - 10000).")
                 .build();
         loadHz.setType(long.class);
+        options.addOption(loadHz);
+
+        Option randomNumberAmount = Option.builder()
+                .option("rma")
+                .longOpt("random-number-amount")
+                .hasArg(true)
+                .argName("<number>")
+                .desc("Amount or Number of random numbers in an event.")
+                .build();
+        randomNumberAmount.setType(int.class);
+        options.addOption(randomNumberAmount);
+
+        Option randomNumberMax = Option.builder()
+                .option("rmmax")
+                .longOpt("random-number-max")
+                .hasArg(true)
+                .argName("<number>")
+                .desc("Maximum value of random numbers in an event.")
+                .build();
+        randomNumberMax.setType(int.class);
+        options.addOption(randomNumberMax);
+
+        Option randomNumberMin = Option.builder()
+                .option("rmmin")
+                .longOpt("random-number-min")
+                .hasArg(true)
+                .argName("<number>")
+                .desc("Minimum value of random numbers in an event.")
+                .build();
+        randomNumberMin.setType(int.class);
+        options.addOption(randomNumberMin);
 
         options.addOption(help);
-        options.addOption(file);
-        options.addOption(kafkaTopic);
-        options.addOption(bootstrapServer);
-        options.addOption(runTime);
-        options.addOption(loadHz);
-        options.addOption(databaseFile);
 
         // create the parser
         CommandLineParser parser = new DefaultParser();
@@ -107,13 +119,6 @@ public class OptionsGenerator {
                 System.exit(0);
             }
 
-//            if (!cmd.hasOption("help")){
-//                if (!(cmd.hasOption("kt") && cmd.hasOption("bs"))) {
-//                    Exception e = new ParseException("All required arguments are not provided. "+
-//                            "Please refer help (-h) for more information");
-//                    throw new RuntimeException(e);
-//                }
-//            }
         } catch (ParseException exp) {
             // oops, something went wrong
             throw new RuntimeException(exp);

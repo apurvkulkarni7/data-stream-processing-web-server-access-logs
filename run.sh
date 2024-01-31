@@ -227,7 +227,8 @@ run () {
   elif [[ "$OPERATION" == "START_GENERATOR" ]]; then
 
     logger_info "Starting log generator"
-    GENERATOR_OPTS="--generator-type ${GENERATOR_TYPE} --loadHz ${LOAD_HZ} --run-time ${SIMULATION_DURATION_SEC} --kafka-topic ${SOURCE_TOPIC} --bootstrap-server ${SOURCE_BOOTSTRAP_SERVER}"
+    #GENERATOR_OPTS="--generator-type ${GENERATOR_TYPE} --loadHz ${LOAD_HZ} --run-time ${SIMULATION_DURATION_SEC} --kafka-topic ${SOURCE_TOPIC} --bootstrap-server ${SOURCE_BOOTSTRAP_SERVER}"
+    GENERATOR_OPTS="--generator-type ${GENERATOR_TYPE} --loadHz ${LOAD_HZ} --run-time ${SIMULATION_DURATION_SEC} --kafka-topic ${SOURCE_TOPIC} --bootstrap-server ${SOURCE_BOOTSTRAP_SERVER} --random-number-amount ${GENERATOR_RANDOM_NUMBER_AMOUNT} --random-number-max ${GENERATOR_RANDOM_NUMBER_MAX} --random-number-min ${GENERATOR_RANDOM_NUMBER_MIN}"
 
     if [[ "$GENERATOR_TYPE" == "constant" ]]; then
       GENERATOR_OPTS="$GENERATOR_OPTS --loadHz ${LOAD_HZ}"

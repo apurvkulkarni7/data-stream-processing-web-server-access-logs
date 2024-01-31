@@ -1,5 +1,6 @@
 package org.example.generator.cases;
 
+import org.example.generator.RandomNumberGenerator;
 import org.example.generator.Simulator;
 import org.example.generator.util.DataGenerator;
 import org.example.generator.util.MyKafkaProducer;
@@ -11,43 +12,45 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
+
 public class ConstantInterval {
 
-    private final DataGenerator generator_;
+    private final RandomNumberGenerator generator_;
     private final MyKafkaProducer producer_;
     private final long runtime_;
-    private final String label_;
-    private long messageCount_;
+    private final long messageCount_;
     private final long frequency_;
     private final Logger LOGGER = Simulator.LOGGER;
 
-    public ConstantInterval(DataGenerator dataGenerator, MyKafkaProducer producer, long runtime, long frequency_, String label){
+    public ConstantInterval(RandomNumberGenerator dataGenerator, MyKafkaProducer producer, long runtime, long frequency_){
         this.runtime_ = runtime*1000; // Converting seconds to milliseconds
         this.producer_ = producer;
         this.generator_ = dataGenerator;
-        this.label_ = label;
+//        this.label_ = label;
         this.messageCount_ = 0;
         this.frequency_ = frequency_;
     }
 
     public long getRuntime(){return this.runtime_;}
-    public DataGenerator getGenerator() {return this.generator_;}
+    public RandomNumberGenerator getGenerator() {return this.generator_;}
     public MyKafkaProducer getProducer() {return this.producer_;}
-    public String getLabel() {return this.label_;}
+//    public String getLabel() {return this.label_;}
     public long getMessageCount() {return messageCount_;}
 
-    public void printInfo(String type_){
-        String boundaryTop = "--------------------------------------------------";
-        if (type_=="start"){
-            LOGGER.info(getLabel() + " " + boundaryTop);
-            LOGGER.info("Simulator started");
-            LOGGER.info("Runtime:{} msec ({} min)",this.getRuntime(),this.getRuntime()/(1000*60));
-            LOGGER.info("Sending data to Kafka topic: {} Bootstrap-server: {}",this.getProducer().kafkaTopic,this.getProducer().bootstrapServer);
-        } else if (type_=="end"){
-            LOGGER.info("Simulator stopped");
-            LOGGER.info("Total messages sent: {}",getMessageCount());
-        }
-    }
+//    public void printInfo(String type_){
+//        String boundaryTop = "--------------------------------------------------";
+//        if (type_=="start"){
+//            LOGGER.info(getLabel() + " " + boundaryTop);
+//            LOGGER.info("Simulator started");
+//            LOGGER.info("Runtime:{} msec ({} min)",this.getRuntime(),this.getRuntime()/(1000*60));
+//            LOGGER.info("Sending data to Kafka topic: {} Bootstrap-server: {}",this.getProducer().kafkaTopic,this.getProducer().bootstrapServer);
+//        } else if (type_=="end"){
+//            LOGGER.info("Simulator stopped");
+//            LOGGER.info("Total messages sent: {}",getMessageCount());
+//        }
+//    }
+
+
 
     public void run(){
         try {
@@ -66,9 +69,10 @@ public class ConstantInterval {
             scheduler.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    String myLogLine = getGenerator().generate();
+//                    String myLogLine = getGenerator().generate();
+                    String myString = String.valueOf(getGenerator().generate());
                     // Sending to topic
-                    getProducer().send(myLogLine);
+                    getProducer().send(myString);
                 }
             }, delay, period, TimeUnit.NANOSECONDS);
 
