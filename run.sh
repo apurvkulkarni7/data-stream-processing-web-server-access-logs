@@ -217,7 +217,7 @@ run () {
   elif [[ "$OPERATION" == "START_FLINK_PROCESSING" ]]; then
 
     logger_info "Starting Apache Flink processing"
-    FLINK_OPTS="--parallelism ${FLINK_PARALLELISM} --source-type kafka --source-kafka-topic ${SOURCE_TOPIC} --source-bootstrap-server ${SOURCE_BOOTSTRAP_SERVER} --sink-type ${SINK_TYPE} --runtime ${SIMULATION_DURATION_SEC} --window-length ${WINDOW_LENGTH_SEC}"
+    FLINK_OPTS="--parallelism ${FLINK_PARALLELISM} --source-type kafka --source-kafka-topic ${SOURCE_TOPIC} --source-bootstrap-server ${SOURCE_BOOTSTRAP_SERVER} --sink-type ${SINK_TYPE} --runtime ${SIMULATION_DURATION_SEC} --window-length ${WINDOW_LENGTH_MS}"
     "${FLINK_HOME}/bin/flink" run ./stream-processor/target/stream-processor-1.0.0.jar $FLINK_OPTS > ./logs/flink.out 2>&1 &
 
   elif [[ "$OPERATION" == "STOP_FLINK_PROCESSING" ]]; then

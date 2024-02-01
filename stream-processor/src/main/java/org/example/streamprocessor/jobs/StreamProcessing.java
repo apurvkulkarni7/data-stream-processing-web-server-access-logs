@@ -10,11 +10,14 @@ import org.apache.flink.streaming.api.windowing.time.Time;
 import org.example.streamprocessor.sinks.sinkMain;
 import org.example.streamprocessor.sources.sourceMain;
 import org.example.streamprocessor.utils.OptionsGenerator;
+import org.example.streamprocessor.utils.RandomNumberDataTransformation;
 import org.example.streamprocessor.utils.SetupStreamExecEnv;
 import org.example.streamprocessor.utils.Transformations;
 import org.example.streamprocessor.utils.Transformations.WindowVisitorsPerSecond;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class StreamProcessing {
     public static final Logger LOGGER = LoggerFactory.getLogger(StreamProcessing.class);
@@ -32,19 +35,16 @@ public class StreamProcessing {
                 .fromSource(env, opt);
 
         // Stream transformations
-        SingleOutputStreamOperator<Tuple14<Long, String, String, String, Double, Double, String, String, String, String, Long, String, String, Long>> streamParsed = sourceStream
-                .map(new Transformations.InputEventToTuple());
+        SingleOutputStreamOperator<List<Long>> streamParsed = sourceStream
+                .map(new RandomNumberDataTransformation.InputEventToList());
 
         // Instantaneous visitors per second for given window
         SingleOutputStreamOperator<String> averageVisitorPerSecond = streamParsed
-                .windowAll(TumblingProcessingTimeWindows.of(Time.seconds(1)))
-                .apply(new WindowVisitorsPerSecond())
-                .map(event -> event.toString());
-
-        //TODO: Develop function for average visitors per second
+                .windowAll(TumblingProcessingTimeWindows.of(Time.milliseconds(Long.parseLong(opt.getOptionValue("window-length","10000")))))
+                .apply(new RandomNumberDataTransformation.WindowComputation());
 
         // Stream sinks
-        sinkMain.mySinkTo(averageVisitorPerSecond, opt, "window_visitor_per_sec");
+        sinkMain.mySinkTo(averageVisitorPerSecond, opt, "events-sink");
 
         try {
             env.execute();

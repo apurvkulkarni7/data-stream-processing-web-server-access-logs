@@ -16,8 +16,8 @@ export FLINK_PARALLELISM="$FLINK_SLOTS_PER_TASKMANAGER" # For multi-node cluster
 # filesystem - the output will be generated in file inside directory "FILESYSTEM_OUTPUT_DIR"
 export SINK_TYPE="filesystem"
 export FILESYSTEM_OUTPUT_DIR="$BASE_DIR/out"
-# Processing window length in seconds (how often the averaging should be produced)
-export WINDOW_LENGTH_SEC=5
+# Processing window length in milliseconds (how often the computation should be produced)
+export WINDOW_LENGTH_MS=1000
 
 # Apache Kafka settings
 #-----------------------------------------------------------------------------
@@ -55,6 +55,6 @@ export SIMULATION_DURATION_SEC=1200
 export GENERATOR_TYPE="constant"
 # Log events to be generated per second (used if 'GENERATOR_TYPE="constant"' )
 export LOAD_HZ=1
-export GENERATOR_RANDOM_NUMBER_AMOUNT=10
-export GENERATOR_RANDOM_NUMBER_MAX=1000
+export GENERATOR_RANDOM_NUMBER_AMOUNT=2
+export GENERATOR_RANDOM_NUMBER_MAX=9
 export GENERATOR_RANDOM_NUMBER_MIN=1

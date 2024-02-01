@@ -128,8 +128,8 @@ public class OptionsGenerator {
                 .option("wl")
                 .longOpt("window-length")
                 .hasArg(true)
-                .argName("Time in seconds")
-                .desc("Window length of processing average/aggregation.")
+                .argName("Time in milliseconds")
+                .desc("Window length of processing average/aggregation. Default=10000")
                 .build();
         options.addOption(windowLength);
 

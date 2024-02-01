@@ -54,15 +54,17 @@ public class RandomNumberDataTransformation {
 
 
     // Functions to calculate visitors per second for given window period
-    public static class WindowVisitorsPerSecond implements AllWindowFunction<List<Long>, List<Long>, TimeWindow> {
+    public static class WindowComputation implements AllWindowFunction<List<Long>, String, TimeWindow> {
         @Override
-        public void apply(TimeWindow timeWindow, Iterable<List<Long>> iterable, Collector<List<Long>> collector) {
+        public void apply(TimeWindow timeWindow, Iterable<List<Long>> iterable, Collector<String> collector) {
             List<Long> firstElement = iterable.iterator().next();
-            long eventSize = firstElement.size();
 
-            List<Long> avgValCounter = new ArrayList<Long>();
+            int eventSize = firstElement.size(); //subtracting timestamp
+            System.out.println("Size of each event: " + eventSize);
+
+            List<Double> avgValCounter = new ArrayList<Double>();
             for (int i = 0; i < eventSize; i++) {
-                avgValCounter.add(0L);
+                avgValCounter.add(0D);
             }
             List<Long> maxValList = new ArrayList<Long>();
             for (int i = 0; i < eventSize; i++) {
@@ -74,21 +76,31 @@ public class RandomNumberDataTransformation {
             }
 
             long count = 0L;
-            List<Long> last_event = null;
 
-            // Adding first element
-            avgValCounter.set(0,firstElement.get(0));
-            avgValCounter.set(1,avgValCounter.get(1) + firstElement.get(1));
-            maxValList.set(1,Math.max(maxValList.get(1),firstElement.get(1)));
-            minValList.set(1,Math.max(minValList.get(1),firstElement.get(1)));
-
+            // Initializing arrays with first element values
+            avgValCounter.set(0, Double.valueOf(firstElement.get(0))); // timestamp
+            maxValList.set(0, firstElement.get(0)); // timestamp
+            minValList.set(0, firstElement.get(0)); // timestamp
+            for (int i = 1; i < firstElement.size(); i++) {
+                avgValCounter.set(i, Double.valueOf(firstElement.get(i)));    // all the values
+                maxValList.set(i,firstElement.get(i)); // max values
+                minValList.set(i,firstElement.get(i)); // max values
+            }
+            System.out.println("Before computation");
+            System.out.println("Average List: " + avgValCounter);
+            System.out.println("Max List: " + maxValList);
+            System.out.println("Min List: " + minValList);
             for (List<Long> event_i : iterable) {
                 count++;
+                if (count == 1) {
+                    continue;
+                }
                 for (Long element_i: event_i){
                     int element_i_index = event_i.indexOf(element_i);
                     if (element_i_index == 0){
-                        avgValCounter.set(element_i_index,firstElement.get(element_i_index));
-                        System.out.println(element_i);
+                        avgValCounter.set(0,Double.valueOf(element_i));
+                        maxValList.set(0,element_i);
+                        minValList.set(0,element_i);
                     } else {
                         // Average counter
                         avgValCounter.set(element_i_index, avgValCounter.get(element_i_index) + element_i);
@@ -102,9 +114,24 @@ public class RandomNumberDataTransformation {
                 }
             }
 
-            double windowLength = (timeWindow.getEnd() - timeWindow.getStart()) / 1000; // in seconds
-            Double result = Double.valueOf(count) / windowLength;
-            collector.collect(new Tuple2<>((Long) last_event.f0, result));
+            for (int i = 1; i < avgValCounter.size(); i++) {
+                avgValCounter.set(i,avgValCounter.get(i)/count);
+            }
+
+            System.out.println("Total events: " + count);
+            System.out.println("After computation");
+            System.out.println("Average List: " + avgValCounter);
+            System.out.println("Max List: " + maxValList);
+            System.out.println("Min List: " + minValList);
+
+            // Final string
+            String myString = "{" + minValList.get(0).toString();
+            for (int i = 1; i < eventSize; i++) {
+                myString += "," + "(" + avgValCounter.get(i) + "," + maxValList.get(i) + "," + minValList.get(i) + ")";
+            }
+            myString += "}";
+
+            collector.collect(myString);
         }
     }
 
